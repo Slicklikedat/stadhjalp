@@ -1,0 +1,18 @@
+# Class reference material – keep local, never push
+old projects/
+assaignment/
+
+# Dependencies
+node_modules/
+
+# Environment variables (API keys, secrets)
+.env
+.env.local
+
+# Build output
+dist/
+build/
+coverage/
+
+# macOS
+.DS_Store
