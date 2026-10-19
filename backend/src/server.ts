@@ -1,6 +1,8 @@
 import express from 'express';
 
 const app = express();
+app.use(express.json());
+
 const PORT = 5001;
 
 interface Task {
@@ -24,6 +26,22 @@ app.get('/api/hello', (req, res) => {
 
 app.get('/api/tasks', (req, res) => {
     res.json(tasks);
+});
+
+app.post('/api/tasks', (req, res) => {
+    const title = req.body.title;
+    if (!title || !title.trim()) {
+        return res.status(400).json({ error: 'Uppgiften måste ha en titel'});
+    }
+
+    const newTask: Task = {
+        id: tasks.length + 1,
+        title: req.body.title,
+        status: 'todo',
+    };
+
+    tasks.push(newTask);
+    res.status(201).json(newTask);
 });
 
 app.listen(PORT, () => {
