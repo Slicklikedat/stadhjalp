@@ -27,12 +27,41 @@ function App() {
       <h1>StädHjälp</h1>
       <p>Familjens städtavla</p>
 
-      {/*.map turns each task into an <li>. key helps React keep track of them.*/}
-      <ul>
-        {tasks.map((task) => (
-          <li key={task.id}>{task.title}</li>
-        ))}
-      </ul>
+      {/* Column 1: task with status "todo" */}
+      <section>
+        <h2>Att göra</h2>
+        <ul>
+          {tasks
+          .filter((task) => task.status === 'todo')
+          .map((task) => (
+            <li key={task.id}>{task.title}</li>
+          ))}
+        </ul>
+      </section>
+
+      {/* Column 2: tasks with tstatus "inProgress" */}
+      <section>
+        <h2>Pågår</h2>
+        <ul>
+          {tasks
+          .filter((task) => task.status === 'inProgress')
+          .map((task) => (
+            <li key={task.id}>{task.title}</li>
+          ))}
+        </ul>
+      </section>
+      
+      {/* Column 3: tasks with status "done" */}
+      <section>
+        <h2>Klart</h2>
+        <ul>
+          {tasks
+          .filter((task) => task.status === 'done')
+          .map((task) => (
+            <li key={task.id}>{task.title}</li>
+          ))}
+        </ul>
+      </section>
     </main>
   );
 }
