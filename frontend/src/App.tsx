@@ -7,6 +7,9 @@ import type { Task, TaskStatus } from './types'
 // Our own component for one Kanban column
 import Column from './components/Column';
 
+// Form for creating new tasks
+import TaskForm from './components/TaskForm';
+
 function App() {
   // tasks = the current list, setTasks = the function that changes it.
   // Starts as an empty list [] until the server answers.
@@ -42,11 +45,19 @@ function App() {
 
   }
 
+  // Called by TaskForm when the form is submitted.
+  // for now it only logs. In part 2 it will talk to the server
+  function addTask(title: string) {
+    console.log('Add task', title);
+  }
+
   return (
     <main>
       <h1>StädHjälp</h1>
       <p>Familjens städtavla</p>
-
+      
+      <TaskForm onAdd={addTask} />
+      
       {/* Same component three times, with different props */}
       <Column title="Att göra" tasks={tasks.filter((task) => task.status === 'todo')} nextStatus="inProgress" onMove={moveTask} />
       <Column title="Pågår" tasks={tasks.filter((task) => task.status === 'inProgress')}nextStatus="done" onMove={moveTask} />
