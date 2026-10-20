@@ -41,7 +41,7 @@ let nextId = 3;
 
 // Describes what a family member must look like
 interface FamilyMember {
-    id: number; 
+    id: number;
     name: string;
     color: string; // A hex color like "#e76f51", used to show the person on cards
 }
@@ -50,7 +50,7 @@ interface FamilyMember {
 const members: FamilyMember[] = [
     { id: 1, name: 'Mamma test', color: '#e75f51' },
     { id: 2, name: 'Pappa test', color: '#2a9d8f' },
-    { id: 3, name: 'Ella test', color: 'e9c46a' },
+    { id: 3, name: 'Ella test', color: '#e9c46a' },
 ];
 
 // The id the NEXT new member will get (same idea as nextId for tasks)
@@ -88,7 +88,7 @@ app.post('/api/tasks', (req, res) => {
     const allMembersExist = Array.isArray(assigneeIds) && assigneeIds.every((id) => members.some((member) => member.id === id));
 
     if (!allMembersExist) {
-        return res.status(400).json({ error: 'En vald familjemedlem finns inte'});
+        return res.status(400).json({ error: 'En vald familjemedlem finns inte' });
     }
 
     // Build the new task. New tasks always start in "todo".

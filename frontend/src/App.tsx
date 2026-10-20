@@ -57,9 +57,9 @@ function App() {
   }
 
   // Called by TaskForm when the form is submitted.
-  function addTask(title: string) {
+  function addTask(title: string, assigneeIds: number[]) {
     // Tell the server, then add the new task (with the id the server chose) to our list
-    createTask(title)
+    createTask(title, assigneeIds)
       .then((newTask) => {
         setTasks((previousTasks) => [...previousTasks, newTask]);
       })
@@ -94,7 +94,7 @@ function App() {
       {/* Success: only show the board when we're done and nothing went wrong*/}
       {!loading && !error && (
         <>
-          <TaskForm onAdd={addTask} />
+          <TaskForm members={members} onAdd={addTask} />
 
           {/* Same component three times, with different props */}
           <Column title="Att göra" tasks={tasks.filter((task) => task.status === 'todo')} members={members} nextStatus="inProgress" onMove={moveTask} onDelete={removeTask} />
