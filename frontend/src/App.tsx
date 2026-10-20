@@ -15,15 +15,28 @@ function App() {
   // Starts as an empty list [] until the server answers.
   const [tasks, setTasks] = useState<Task[]>([]);
 
+  // True while we wait for the server's first answer
+  const [loading, setLoading] = useState(true);
+  // An error message to show, or null when everything is fine
+  const [error, setError] = useState<string | null>(null);
+
   // Runs once, after the component first appears on screen
   useEffect(() => {
     // Ask the backend for the task (a GET request, just like the browser does)
     fetch('http://localhost:5001/api/tasks')
-    // Turn the answer from JSON text into a JavaScript array
-    .then((response) => response.json())
-    // Save the array in state -> React redraws the page with the tasks
-    .then((data) => setTasks(data));
-  }, []); // [] = only run once, not every redraw
+    .then((response) => {
+      // fetch only fails on its own if the server can't be reached.
+      // An error answer (like 404 or 500) we have to check ourselves:
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      return response.json();
+    })
+    // Success: save the tasks
+    .then((data: Task[]) => setTasks(data))
+    // Error: anything that went wrong above ends up here
+    .catch(() => setError('Kunde inte hämta uppgifterna. Är servern igång?'))
+    // Runs last, whether it worked or not: we're done loading
+    .finally(() => setLoading(false));
+  }, []); // [] = only run once, not on every redraw
 
   // Called by Column when a "Flytta ->" button is clicked.
   function moveTask(taskId: number, newStatus: TaskStatus) {
@@ -68,13 +81,24 @@ function App() {
     <main>
       <h1>StädHjälp</h1>
       <p>Familjens städtavla</p>
-      
-      <TaskForm onAdd={addTask} />
+      {/* Loading: shown until the first answer arrives */}
+      {loading && <p>Laddar uppgifter...</p>}
 
-      {/* Same component three times, with different props */}
-      <Column title="Att göra" tasks={tasks.filter((task) => task.status === 'todo')} nextStatus="inProgress" onMove={moveTask} />
-      <Column title="Pågår" tasks={tasks.filter((task) => task.status === 'inProgress')}nextStatus="done" onMove={moveTask} />
-      <Column title="Klart" tasks={tasks.filter((task) => task.status === 'done')} onMove={moveTask} />
+      {/* Error: role="alert" makes screen readers read it out right away*/}
+      {error && <p role="alert">{error}</p>}
+
+      {/* Success: only show the board when we're done and nothing went wrong*/}
+      {!loading && !error && (
+        <>
+        <TaskForm onAdd={addTask} />
+
+        {/* Same component three times, with different props */}
+        <Column title="Att göra" tasks={tasks.filter((task) => task.status === 'todo')} nextStatus="inProgress" onMove={moveTask} />
+        <Column title="Pågår" tasks={tasks.filter((task) => task.status === 'inProgress')} nextStatus="done" onMove={moveTask} />
+        <Column title="Klart" tasks={tasks.filter((task) => task.status === 'done')} onMove={moveTask} />
+        </>
+      )}
+
 
     </main>
   );
