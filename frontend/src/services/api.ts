@@ -37,3 +37,12 @@ export function updateTaskStatus(taskId: number, status: TaskStatus): Promise<Ta
     return response.json();
   });
 }
+
+
+export function deleteTask(taskId: number): Promise<void> {
+    return fetch(`${API_URL}/tasks/${taskId}`, {
+        method: 'DELETE',
+    }).then((response) => {
+        if (!response.ok) throw new Error (`HTTP ${response.status}`);
+    });
+}

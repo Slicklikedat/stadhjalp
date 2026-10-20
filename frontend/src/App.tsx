@@ -11,7 +11,8 @@ import Column from './components/Column';
 import TaskForm from './components/TaskForm';
 
 // All server communication goes through these functions
-import { getTasks, createTask, updateTaskStatus } from './services/api';
+import { getTasks, createTask, updateTaskStatus, deleteTask } from './services/api';
+
 
 function App() {
   // tasks = the current list, setTasks = the function that changes it.
@@ -60,6 +61,20 @@ function App() {
     .catch(() => alert('Kunde inte skapa uppgiften.'));
   }
 
+// Called by Column when a "Ta bort" button is clicked
+function removeTask(taskId: number) {
+  // Tell the server to delete the task
+  deleteTask(taskId)
+  .then(() => {
+    // Keep every task except the one we deleted
+    setTasks((previousTasks) =>
+    previousTasks.filter((task) => task.id !== taskId)
+  );
+})
+  // if the server couldn't be reached or said no, tell teh user
+  .catch(() => alert('Kunde inte ta bort uppgiften.'));
+}
+
   return (
     <main>
       <h1>StädHjälp</h1>
@@ -76,9 +91,9 @@ function App() {
         <TaskForm onAdd={addTask} />
 
         {/* Same component three times, with different props */}
-        <Column title="Att göra" tasks={tasks.filter((task) => task.status === 'todo')} nextStatus="inProgress" onMove={moveTask} />
-        <Column title="Pågår" tasks={tasks.filter((task) => task.status === 'inProgress')} nextStatus="done" onMove={moveTask} />
-        <Column title="Klart" tasks={tasks.filter((task) => task.status === 'done')} onMove={moveTask} />
+        <Column title="Att göra" tasks={tasks.filter((task) => task.status === 'todo')} nextStatus="inProgress" onMove={moveTask} onDelete={removeTask} />
+        <Column title="Pågår" tasks={tasks.filter((task) => task.status === 'inProgress')} nextStatus="done" onMove={moveTask} onDelete={removeTask} />
+        <Column title="Klart" tasks={tasks.filter((task) => task.status === 'done')} onMove={moveTask} onDelete={removeTask} />
         </>
       )}
 
