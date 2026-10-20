@@ -22,13 +22,18 @@ interface Task {
     id: number;
     title: string;
     status: 'todo' | 'inProgress' | 'done';
+    assigneeIds: number[]; // The ids of the members who take turns, in order
+    currentAssigneeIndex: number; // Position in assigneeIds of whose turn it is now
+
 }
 
 // Our temporary "database": a list in memory.
 // It resets every time the server restarts.
 const tasks: Task[] = [
-    { id: 1, title: 'Damsuga vardagsrummet test', status: 'todo' },
-    { id: 2, title: 'Tömma dismakskinen test', status: 'todo' },
+    // Mamma (1) and Ella (3) take turns. It's Mamma's turn (position 0).
+    { id: 1, title: 'Damsuga vardagsrummet test', status: 'todo', assigneeIds: [1, 3], currentAssigneeIndex: 0 },
+    // Only Pappa (2) does this one
+    { id: 2, title: 'Tömma dismakskinen test', status: 'todo', assigneeIds: [2], currentAssigneeIndex: 0 },
 ];
 
 // The id the NEXT new task will get. Only goes up, never down, so an id is never reused, even after a task is deleted.
@@ -76,11 +81,23 @@ app.post('/api/tasks', (req, res) => {
         return res.status(400).json({ error: 'Uppgiften måste ha en titel' });
     }
 
+    // Who takes turns. If nothing was sent, start with an empty list (nobody yet).
+    const assigneeIds = req.body.assigneeIds || [];
+
+    // Validation: must be a list, and every id must belong to a real family member
+    const allMembersExist = Array.isArray(assigneeIds) && assigneeIds.every((id) => members.some((member) => member.id === id));
+
+    if (!allMembersExist) {
+        return res.status(400).json({ error: 'En vald familjemedlem finns inte'});
+    }
+
     // Build the new task. New tasks always start in "todo".
     const newTask: Task = {
         id: nextId,
         title: title.trim(), // trim() removes extra spaces at the start/end
         status: 'todo',
+        assigneeIds: assigneeIds, // The people who take turns
+        currentAssigneeIndex: 0, // The first person in the list starts
     };
 
     tasks.push(newTask);
