@@ -48,7 +48,20 @@ function App() {
   // Called by TaskForm when the form is submitted.
   // for now it only logs. In part 2 it will talk to the server
   function addTask(title: string) {
-    console.log('Add task', title);
+    // 1. Send a POST to the server with the title, like our curl test
+    fetch('http://localhost:5001/api/tasks', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:JSON.stringify({ title: title }),
+    })
+    // The server answers with the new task, including the id it chose
+    .then((response) => response.json())
+    .then((newTask: Task) => {
+      // 2. Add the new task to the END of our list.
+      // [...previousTasks, newTask] = a NEW list: all old tasks + the new one
+      setTasks((previousTasks) => [...previousTasks, newTask]);
+    });
+
   }
 
   return (
@@ -57,7 +70,7 @@ function App() {
       <p>Familjens städtavla</p>
       
       <TaskForm onAdd={addTask} />
-      
+
       {/* Same component three times, with different props */}
       <Column title="Att göra" tasks={tasks.filter((task) => task.status === 'todo')} nextStatus="inProgress" onMove={moveTask} />
       <Column title="Pågår" tasks={tasks.filter((task) => task.status === 'inProgress')}nextStatus="done" onMove={moveTask} />
