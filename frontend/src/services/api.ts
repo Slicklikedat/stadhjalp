@@ -1,6 +1,6 @@
 // All communication with the backend lives in this file.
 // Components call these functions and never use fetch directly.
-import type { Task, TaskStatus } from '../types';
+import type { Task, TaskStatus, FamilyMember} from '../types';
 
 // The server's address, written in ONE place
 const API_URL = 'http://localhost:5001/api';
@@ -45,4 +45,14 @@ export function deleteTask(taskId: number): Promise<void> {
     }).then((response) => {
         if (!response.ok) throw new Error (`HTTP ${response.status}`);
     });
+}
+
+
+// GET /api/members -> all family members
+export function getMembers(): Promise<FamilyMember[]> {
+  return fetch(`${API_URL}/members`).then((response) => {
+    // Turn an error status (404, 500...) into a real error
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return response.json();
+  });
 }
