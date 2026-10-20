@@ -1,8 +1,14 @@
 // Import Express, which makes it easy to build a web server
 import express from 'express';
 
+// CORS let our React app (on another port) read answers from this server
+import cors from 'cors';
+
 // Create the server application
 const app = express();
+
+// Allow requests from other origins, like our frontend on port 5173
+app.use(cors());
 
 // Turn incoming JSON (e.g. from a POST) into an object we can use as req.body
 app.use(express.json());
