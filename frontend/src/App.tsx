@@ -97,9 +97,9 @@ function App() {
           <TaskForm onAdd={addTask} />
 
           {/* Same component three times, with different props */}
-          <Column title="Att göra" tasks={tasks.filter((task) => task.status === 'todo')} nextStatus="inProgress" onMove={moveTask} onDelete={removeTask} />
-          <Column title="Pågår" tasks={tasks.filter((task) => task.status === 'inProgress')} nextStatus="done" onMove={moveTask} onDelete={removeTask} />
-          <Column title="Klart" tasks={tasks.filter((task) => task.status === 'done')} onMove={moveTask} onDelete={removeTask} />
+          <Column title="Att göra" tasks={tasks.filter((task) => task.status === 'todo')} members={members} nextStatus="inProgress" onMove={moveTask} onDelete={removeTask} />
+          <Column title="Pågår" tasks={tasks.filter((task) => task.status === 'inProgress')} members={members} nextStatus="done" onMove={moveTask} onDelete={removeTask} />
+          <Column title="Klart" tasks={tasks.filter((task) => task.status === 'done')} members={members} onMove={moveTask} onDelete={removeTask} />
         </>
       )}
 
