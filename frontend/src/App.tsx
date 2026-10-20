@@ -23,9 +23,23 @@ function App() {
   }, []); // [] = only run once, not every redraw
 
   // Called by Column when a "Flytta ->" button is clicked.
-  // For now it only logs. In part 2 it will talk to the server.
   function moveTask(taskId: number, newStatus: TaskStatus) {
-    console.log('Move Task', taskId, 'to', newStatus);
+    // 1. Send a PATCH to the server, like we did with curl.
+    // The task id goes in the URL; the new status goes in the body.
+    fetch(`http://localhost:5001/api/tasks/${taskId}/status`, {
+      method: 'PATCH',  //curl's -X PATCH
+      headers: { 'Content-Type': 'application/json' }, //curl's -H "Content-Type:..."
+      body: JSON.stringify({ status: newStatus }), // curl's -d '{"status":"..."}'
+    })
+    // The server answers with the update task
+    .then((response) => response.json())
+    .then((updatedTask: Task) => {
+      // 2. Update our list: swap the old version of the task for the new one
+      setTasks((previousTasks) =>
+      previousTasks.map((task) => (task.id === updatedTask.id ? updatedTask : task))
+    );
+    });
+
   }
 
   return (
