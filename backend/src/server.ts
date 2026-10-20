@@ -4,6 +4,9 @@ import express from 'express';
 // CORS let our React app (on another port) read answers from this server
 import cors from 'cors';
 
+// Rotation logic lives in its own file, so it can be tested on its own
+import { getNextAssigneeIndex } from './utils/rotation';
+
 // Create the server application
 const app = express();
 
@@ -127,6 +130,14 @@ app.patch('/api/tasks/:id/status', (req, res) => {
     // Only accept our three columns. 400 = Bad Request.
     if (status !== 'todo' && status !== 'inProgress' && status !== 'done') {
         return res.status(400).json({ error: 'Ogiltig status' });
+    }
+
+    // Moved TO "done" (and wasn't done already) -> it's the next person's turn
+    if (status === 'done' && task.status !== 'done') {
+        task.currentAssigneeIndex = getNextAssigneeIndex(
+            task.currentAssigneeIndex,
+            task.assigneeIds.length
+        );
     }
 
     // Change the task (find gives us the real task in the list, not a copy)
