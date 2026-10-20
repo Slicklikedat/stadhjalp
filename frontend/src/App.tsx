@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 
 // Import the Task type from our shared types file
-import type { Task } from './types'
+import type { Task, TaskStatus } from './types'
 
 // Our own component for one Kanban column
 import Column from './components/Column';
@@ -21,15 +21,22 @@ function App() {
     // Save the array in state -> React redraws the page with the tasks
     .then((data) => setTasks(data));
   }, []); // [] = only run once, not every redraw
+
+  // Called by Column when a "Flytta ->" button is clicked.
+  // For now it only logs. In part 2 it will talk to the server.
+  function moveTask(taskId: number, newStatus: TaskStatus) {
+    console.log('Move Task', taskId, 'to', newStatus);
+  }
+
   return (
     <main>
       <h1>StädHjälp</h1>
       <p>Familjens städtavla</p>
 
       {/* Same component three times, with different props */}
-      <Column title="Att göra" tasks={tasks.filter((task) => task.status === 'todo')} />
-      <Column title="Pågår" tasks={tasks.filter((task) => task.status === 'inProgress')} />
-      <Column title="Klart" tasks={tasks.filter((task) => task.status === 'done')} />
+      <Column title="Att göra" tasks={tasks.filter((task) => task.status === 'todo')} nextStatus="inProgress" onMove={moveTask} />
+      <Column title="Pågår" tasks={tasks.filter((task) => task.status === 'inProgress')}nextStatus="done" onMove={moveTask} />
+      <Column title="Klart" tasks={tasks.filter((task) => task.status === 'done')} onMove={moveTask} />
 
     </main>
   );
