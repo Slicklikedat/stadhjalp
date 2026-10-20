@@ -34,6 +34,24 @@ const tasks: Task[] = [
 // The id the NEXT new task will get. Only goes up, never down, so an id is never reused, even after a task is deleted.
 let nextId = 3;
 
+// Describes what a family member must look like
+interface FamilyMember {
+    id: number; 
+    name: string;
+    color: string; // A hex color like "#e76f51", used to show the person on cards
+}
+
+// Temporary list of family members ( resets when the server restarts)
+const members: FamilyMember[] = [
+    { id: 1, name: 'Mamma test', color: '#e75f51' },
+    { id: 2, name: 'Pappa test', color: '#2a9d8f' },
+    { id: 3, name: 'Ella test', color: 'e9c46a' },
+];
+
+// The id the NEXT new member will get (same idea as nextId for tasks)
+let nextMemberId = 4;
+
+
 // GET / → simple text to check that the server is running
 app.get('/', (req, res) => {
     res.send('Välkommen till Städhjälp API!');
@@ -118,6 +136,34 @@ app.delete('/api/tasks/:id', (req, res) => {
 
     // 204 = No Content: "it worked, nothing to send back"
     res.status(204).end();
+});
+
+// GET /api/members -> send all family members
+app.get('/api/members', (req, res) => {
+    res.json(members);
+});
+
+// POST /api/members -> add a family member
+app.post('/api/members', (req, res) => {
+    const name = req.body.name;
+    const color = req.body.color;
+
+    // Validation: a name is required (same check as task titles)
+    if (!name || !name.trim()) {
+        return res.status(400).json({ error: 'namn krävs' });
+    }
+
+    const newMember: FamilyMember = {
+        id: nextMemberId,
+        name: name.trim(),
+        // Use the color that was sent, or a default color if none was sent
+        color: color || '#8e7dbe',
+    };
+    members.push(newMember);
+    nextMemberId = nextMemberId + 1;
+
+    // 201 = Created
+    res.status(201).json(newMember);
 });
 
 // Start the server
