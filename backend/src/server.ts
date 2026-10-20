@@ -27,6 +27,8 @@ interface Task {
     status: 'todo' | 'inProgress' | 'done';
     assigneeIds: number[]; // The ids of the members who take turns, in order
     currentAssigneeIndex: number; // Position in assigneeIds of whose turn it is now
+    repeatEveryDays: number | null; // Days until it comes back after klart. null = one-time task
+    nextDueAt: string | null; // ISO date when it comes back to "todo". null = not scheduled
 
 }
 
@@ -34,9 +36,9 @@ interface Task {
 // It resets every time the server restarts.
 const tasks: Task[] = [
     // Mamma (1) and Ella (3) take turns. It's Mamma's turn (position 0).
-    { id: 1, title: 'Damsuga vardagsrummet test', status: 'todo', assigneeIds: [1, 3], currentAssigneeIndex: 0 },
+    { id: 1, title: 'Damsuga vardagsrummet test', status: 'todo', assigneeIds: [1, 3], currentAssigneeIndex: 0, repeatEveryDays: 7, nextDueAt: null },
     // Only Pappa (2) does this one
-    { id: 2, title: 'Tömma dismakskinen test', status: 'todo', assigneeIds: [2], currentAssigneeIndex: 0 },
+    { id: 2, title: 'Tömma dismakskinen test', status: 'todo', assigneeIds: [2], currentAssigneeIndex: 0, repeatEveryDays: null, nextDueAt: null },
 ];
 
 // The id the NEXT new task will get. Only goes up, never down, so an id is never reused, even after a task is deleted.
@@ -90,6 +92,17 @@ app.post('/api/tasks', (req, res) => {
     // Validation: must be a list, and every id must belong to a real family member
     const allMembersExist = Array.isArray(assigneeIds) && assigneeIds.every((id) => members.some((member) => member.id === id));
 
+    // How often the task repeats. Not sent = null
+    const repeatEveryDays = req.body.repeatEveryDays ?? null;
+
+    // Validation: either null, or a whole number from 1 to 365
+    const validRepeat = repeatEveryDays === null ||
+    (Number.isInteger(repeatEveryDays) && repeatEveryDays >= 1 && repeatEveryDays <= 365);
+
+    if (!validRepeat) {
+        return res.status(400).json({ error: 'Antal dagar måste vara mellan 1 och 365' });
+    }
+
     if (!allMembersExist) {
         return res.status(400).json({ error: 'En vald familjemedlem finns inte' });
     }
@@ -101,6 +114,9 @@ app.post('/api/tasks', (req, res) => {
         status: 'todo',
         assigneeIds: assigneeIds, // The people who take turns
         currentAssigneeIndex: 0, // The first person in the list starts
+        repeatEveryDays: repeatEveryDays, // How often it repeats
+        nextDueAt: null, // Nothing scheduled until it's done
+
     };
 
     tasks.push(newTask);

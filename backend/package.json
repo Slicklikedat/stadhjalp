@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "tsx watch src/server.ts",
-    "test": "jest"
+    "test": "jest",
+    "typecheck": "tsc --noEmit"
   },
   "keywords": [],
   "type": "module",
@@ -25,5 +26,7 @@
     "jest": "^30.5.2",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2"
+    
   }
+  
 }
