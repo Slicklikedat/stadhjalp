@@ -1,15 +1,14 @@
 // Import the two hooks we need from React
 import { useEffect, useState } from 'react';
 
-// The same shape as the Task interface in the backend
-interface Task {
-  id: number;
-  title: string;
-  status: 'todo' | 'inProgress' | 'done';
-}
+// Import the Task type from our shared types file
+import type { Task } from './types'
+
+// Our own component for one Kanban column
+import Column from './components/Column';
 
 function App() {
-  // task = the current list, setTasks = the function that changes it.
+  // tasks = the current list, setTasks = the function that changes it.
   // Starts as an empty list [] until the server answers.
   const [tasks, setTasks] = useState<Task[]>([]);
 
@@ -19,7 +18,7 @@ function App() {
     fetch('http://localhost:5001/api/tasks')
     // Turn the answer from JSON text into a JavaScript array
     .then((response) => response.json())
-    // Save teh array in state -> React redraws the page with the tasks
+    // Save the array in state -> React redraws the page with the tasks
     .then((data) => setTasks(data));
   }, []); // [] = only run once, not every redraw
   return (
@@ -27,41 +26,11 @@ function App() {
       <h1>StädHjälp</h1>
       <p>Familjens städtavla</p>
 
-      {/* Column 1: task with status "todo" */}
-      <section>
-        <h2>Att göra</h2>
-        <ul>
-          {tasks
-          .filter((task) => task.status === 'todo')
-          .map((task) => (
-            <li key={task.id}>{task.title}</li>
-          ))}
-        </ul>
-      </section>
+      {/* Same component three times, with different props */}
+      <Column title="Att göra" tasks={tasks.filter((task) => task.status === 'todo')} />
+      <Column title="Pågår" tasks={tasks.filter((task) => task.status === 'inProgress')} />
+      <Column title="Klart" tasks={tasks.filter((task) => task.status === 'done')} />
 
-      {/* Column 2: tasks with tstatus "inProgress" */}
-      <section>
-        <h2>Pågår</h2>
-        <ul>
-          {tasks
-          .filter((task) => task.status === 'inProgress')
-          .map((task) => (
-            <li key={task.id}>{task.title}</li>
-          ))}
-        </ul>
-      </section>
-      
-      {/* Column 3: tasks with status "done" */}
-      <section>
-        <h2>Klart</h2>
-        <ul>
-          {tasks
-          .filter((task) => task.status === 'done')
-          .map((task) => (
-            <li key={task.id}>{task.title}</li>
-          ))}
-        </ul>
-      </section>
     </main>
   );
 }
