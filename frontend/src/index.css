@@ -1,0 +1,82 @@
+/* ---------- Base: font and background for the whole page ---------- */
+:root {
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  line-height: 1.5;
+  color: #1f2328;
+  background: #f6f4ef;
+}
+
+body {
+  margin: 0;
+}
+
+/* The page content: not too wide on big screens, centered */
+.app {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+/* ---------- The board ----------
+   Mobile first: on small screens the columns are stacked (one per row) */
+.board {
+  display: grid;
+  gap: 1rem;
+}
+
+/* From 760px wide (tablets and computers): three columns side by side */
+@media (min-width: 760px) {
+  .board {
+    grid-template-columns: repeat(3, 1fr);
+    align-items: start;
+  }
+}
+
+/* ---------- One column ---------- */
+.column {
+  background: #eef4fb;
+  border-radius: 10px;
+  padding: 1rem;
+}
+
+/* The list of cards: no bullets, space between the cards */
+.column ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+/* ---------- One task card ---------- */
+.task-card {
+  background: white;
+  border: 1px solid #d9d6cf;
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+}
+
+.task-card h3 {
+  margin: 0 0 0.25rem;
+  font-size: 1.05rem;
+}
+
+.task-card p {
+  margin: 0 0 0.25rem;
+  color: #5b616b;
+  font-size: 0.9rem;
+}
+
+/* "Kommer tillbaka om ..." stands out a little */
+.task-card .task-returns {
+  color: #1f6f68;
+  font-weight: 600;
+}
+
+/* The buttons in a row, wrapping to a new row if there isn't room */
+.task-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}

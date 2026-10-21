@@ -26,26 +26,26 @@ function Column({ title, tasks, members, nextStatus, onMove, onDelete }: ColumnP
                     // Step 2: find that person among all members (undefined if nobody)
                     const currentMember = members.find((member) => member.id === currentId);
                     return (
-                        <li key={task.id}>
-                            {task.title}
-                            {/* Show whose turn it is, or "Ingen vald" if nobody is assigned */}
-                            <span> · Tur: {currentMember ? currentMember.name : 'Ingen vald'}</span>
-                            
-                            {/* How often it repeats, e.g. "Upprepas efter 7 dagar"*/}
-                            <span> · {formatRepeat(task.repeatEveryDays)}</span> 
-                            
+                        <li key={task.id} className="task-card">
+                            {/* The task's title as a small heading */}
+                            <h3>{task.title}</h3>
+
+                            {/* Each detail on its own line */}
+                            <p>Tur: {currentMember ? currentMember.name : 'Ingen vald'}</p>
+                            <p>{formatRepeat(task.repeatEveryDays)}</p>
+
                             {/* Only for done tasks that will come back: when */}
                             {task.status === 'done' && task.nextDueAt && (
-                                <span> · {formatReturnsIn(task.nextDueAt, new Date())} </span>
-
-                            )}
-                            {/* Only show the button if this column has a next column */}
-                            {nextStatus && (
-                                <button onClick={() => onMove(task.id, nextStatus)}>Flytta →</button>
+                                <p className="task-returns">{formatReturnsIn(task.nextDueAt, new Date())}</p>
                             )}
 
-                            {/* Every task can be deleted, in every column */}
-                            <button onClick={() => onDelete(task.id)}>Ta bort</button>
+                            {/* The buttons grouped together, so CSS can lay them out in a row */}
+                            <div className="task-actions">
+                                {nextStatus && (
+                                    <button onClick={() => onMove(task.id, nextStatus)}>Flytta →</button>
+                                )}
+                                <button onClick={() => onDelete(task.id)}>Ta bort</button>
+                            </div>
                         </li>
                     )
                 }
