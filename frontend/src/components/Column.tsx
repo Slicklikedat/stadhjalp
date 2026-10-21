@@ -1,5 +1,8 @@
 import type { Task, TaskStatus, FamilyMember } from '../types';
 
+// Turns number and dates into Swedish text for the cards
+import { formatRepeat, formatReturnsIn } from '../utils/dateFormat';
+
 // Describes which props Column expects to receive
 interface ColumnProps {
     title: string;           // The heading, e.g. "Att göra"
@@ -27,6 +30,15 @@ function Column({ title, tasks, members, nextStatus, onMove, onDelete }: ColumnP
                             {task.title}
                             {/* Show whose turn it is, or "Ingen vald" if nobody is assigned */}
                             <span> · Tur: {currentMember ? currentMember.name : 'Ingen vald'}</span>
+                            
+                            {/* How often it repeats, e.g. "Upprepas efter 7 dagar"*/}
+                            <span> · {formatRepeat(task.repeatEveryDays)}</span> 
+                            
+                            {/* Only for done tasks that will come back: when */}
+                            {task.status === 'done' && task.nextDueAt && (
+                                <span> · {formatReturnsIn(task.nextDueAt, new Date())} </span>
+
+                            )}
                             {/* Only show the button if this column has a next column */}
                             {nextStatus && (
                                 <button onClick={() => onMove(task.id, nextStatus)}>Flytta →</button>
