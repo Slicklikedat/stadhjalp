@@ -67,3 +67,16 @@ export function deleteMember(memberId: number): Promise<void> {
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
     });
 }
+
+// POST /api/members → create a family member, get the new member back
+export function createMember(name: string, color: string): Promise<FamilyMember> {
+    return fetch(`${API_URL}/members`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: name, color: color }),
+        
+    }).then((response) => {
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return response.json();
+    });
+}

@@ -11,10 +11,13 @@ import Column from './components/Column';
 import TaskForm from './components/TaskForm';
 
 // All server communication goes through these functions
-import { getTasks, createTask, updateTaskStatus, deleteTask, getMembers, deleteMember } from './services/api';
+import { getTasks, createTask, updateTaskStatus, deleteTask, getMembers, deleteMember, createMember } from './services/api';
 
 // Shows the family with a delete button for each person
 import MemberList from './components/MemberList';
+
+// Form for adding a family member
+import MemberForm from './components/MemberForm';
 
 
 function App() {
@@ -68,6 +71,15 @@ function App() {
       })
       // If the server couldn't be reached or said no, tell the user
       .catch(() => alert('Kunde inte skapa uppgiften.'));
+  }
+
+  // Called by MemberForm when the form is submitted
+  function addMember(name: string, color: string) {
+    createMember(name, color)
+    .then((newMember) => {
+      setMembers((previousMembers) => [...previousMembers, newMember]);
+    })
+    .catch(() => alert('Kunde inte skapa person.'))
   }
 
   // Called by Column when a "Ta bort" button is clicked
@@ -128,6 +140,9 @@ function App() {
 
           {/* The family, with a delete button for each person */}
           <MemberList members={members} onDelete={removeMember} />
+
+          {/* Form for adding a family member */}
+          <MemberForm onAdd={addMember} />
 
         </>
       )}
