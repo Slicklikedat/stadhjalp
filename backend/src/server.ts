@@ -7,6 +7,9 @@ import cors from 'cors';
 // Rotation logic lives in its own file, so it can be tested on its own
 import { getNextAssigneeIndex } from './utils/rotation';
 
+// Date calcuation for repeating tasks
+import { addDays } from './utils/dates';
+
 // Create the server application
 const app = express();
 
@@ -154,6 +157,16 @@ app.patch('/api/tasks/:id/status', (req, res) => {
             task.currentAssigneeIndex,
             task.assigneeIds.length
         );
+        
+        // Repeating task? Schedule when it comes back: now + X days.
+        //toISOString() turns the date into text that JSON can send.
+        if (task.repeatEveryDays !== null) {
+            task.nextDueAt = addDays(new Date(), task.repeatEveryDays).toISOString();
+            
+        }
+    } else if (status !== 'done') {
+        // Moved OUT of done (or between todo/inProgress): nothing is scheduled
+        task.nextDueAt = null;
     }
 
     // Change the task (find gives us the real task in the list, not a copy)
