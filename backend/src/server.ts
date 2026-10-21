@@ -13,14 +13,15 @@ import { addDays, isDue } from './utils/dates';
 // Create the server application
 const app = express();
 
-// Allow requests from other origins, like our frontend on port 5173
-app.use(cors());
+// Only allow our own website. On Render, CLIENT_URL is your Vercel address
+// (you already set it there). Locally it's not set, so all origins are allowed.
+app.use(cors({ origin: process.env.CLIENT_URL || '*'}));
 
 // Turn incoming JSON (e.g. from a POST) into an object we can use as req.body
 app.use(express.json());
 
-// The port the server listens on (5000 is taken by AirPlay on Mac)
-const PORT = 5001;
+// Render gives us a port in process.env.PORT. Locally we use 5001.
+const PORT = Number(process.env.PORT) || 5001;
 
 // Describes what a task must look like.
 // status can ONLY be one of the three columns (a union type).

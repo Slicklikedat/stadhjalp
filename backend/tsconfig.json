@@ -8,5 +8,5 @@
     "noEmit": true,
     "types": ["node", "jest"]
   },
-  "include": ["src", "tests"]
+  "include": ["src", "tests", "../frontend/src/utils/dateFormat.ts"]
 }
