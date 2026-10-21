@@ -58,3 +58,12 @@ export function getMembers(): Promise<FamilyMember[]> {
         return response.json();
     });
 }
+
+// DELETE /api/members/:id → remove a family member
+export function deleteMember(memberId: number): Promise<void> {
+    return fetch(`${API_URL}/members/${memberId}`, {
+        method: 'DELETE',
+    }).then((response) => {
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    });
+}

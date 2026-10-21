@@ -11,7 +11,10 @@ import Column from './components/Column';
 import TaskForm from './components/TaskForm';
 
 // All server communication goes through these functions
-import { getTasks, createTask, updateTaskStatus, deleteTask, getMembers } from './services/api';
+import { getTasks, createTask, updateTaskStatus, deleteTask, getMembers, deleteMember } from './services/api';
+
+// Shows the family with a delete button for each person
+import MemberList from './components/MemberList';
 
 
 function App() {
@@ -81,6 +84,25 @@ function App() {
       .catch(() => alert('Kunde inte ta bort uppgiften.'));
   }
 
+  // Called by MemberList when a "Ta bort" button is clicked
+  function removeMember(memberId: number) {
+    deleteMember(memberId)
+      .then(() => {
+        // Remove the person from our list of members
+        setMembers((previousMembers) =>
+          previousMembers.filter((member) => member.id !== memberId)
+        );
+
+        // The server also removed them from every task's rotation.
+        // Fetch the tasks again so the board shows the server's updated version.
+        return getTasks();
+      })
+      // getTasks() above returns a Promise, so this .then gets the new tasks
+      .then((tasksData) => setTasks(tasksData))
+      // If the server couldn't be reached or said no, tell the user
+      .catch(() => alert('Kunde inte ta bort familjemedlemmen.'));
+  }
+
   return (
     <main className="app">
       <h1>StädHjälp</h1>
@@ -103,6 +125,10 @@ function App() {
             <Column title="Klart" tasks={tasks.filter((task) => task.status === 'done')} members={members} onMove={moveTask} onDelete={removeTask} />
 
           </div>
+
+          {/* The family, with a delete button for each person */}
+          <MemberList members={members} onDelete={removeMember} />
+
         </>
       )}
 
