@@ -2,8 +2,9 @@
 // Components call these functions and never use fetch directly.
 import type { Task, TaskStatus, FamilyMember } from '../types';
 
-// The server's address, written in ONE place
-const API_URL = 'http://localhost:5001/api';
+// The server's address. on Vercel, VITE_API_URL is set to the Render address.
+// Locally it's not set, so we fall back to our own computer.
+const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:5001/api';
 
 // GET /api/tasks → all tasks
 export function getTasks(): Promise<Task[]> {

@@ -9,6 +9,9 @@
     "test": "jest",
     "typecheck": "tsc --noEmit"
   },
+  "engines": {
+    "node": ">=22.12"
+  },
   "keywords": [],
   "type": "module",
   "dependencies": {
