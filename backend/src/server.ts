@@ -8,7 +8,7 @@ import cors from 'cors';
 import { getNextAssigneeIndex } from './utils/rotation';
 
 // Date calcuation for repeating tasks
-import { addDays } from './utils/dates';
+import { addDays, isDue } from './utils/dates';
 
 // Create the server application
 const app = express();
@@ -77,6 +77,17 @@ app.get('/api/hello', (req, res) => {
 
 // GET /api/tasks → send the whole task list
 app.get('/api/tasks', (req, res) => {
+    const now = new Date();
+
+    // Before answering: send repeating tasks whose days has come back to "todo"
+    tasks.forEach((task) => {
+        if (task.status === 'done' && isDue(task.nextDueAt, now)) {
+            task.status = 'todo'; // Back in "Att göra"
+            task.nextDueAt = null; // Nothing scheduled until it's done again
+            
+        }
+    });
+
     res.json(tasks);
 });
 

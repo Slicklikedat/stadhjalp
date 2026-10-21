@@ -8,3 +8,14 @@ export function addDays(date: Date, days: number): Date {
     // Add the days (as milliseconds) and turn it back into a date.
     return new Date(date.getTime() + days * MS_PER_DAY);
 }
+
+// True if a "come back" date exists and has been reahced.
+// "now" is a parameter (instead of new Date() inside) so tests can pick any date.
+export function isDue(nextDueAt: string | null, now: Date): boolean {
+    // Nothing scheduled -> never due
+    if (nextDueAt === null) return false;
+
+    // Turn the ISO text back into a date and compare the millisecond numbers.
+    // <= means "the moment has come or already passed".
+    return new Date(nextDueAt).getTime() <= now.getTime();
+}
