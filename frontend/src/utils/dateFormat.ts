@@ -12,7 +12,7 @@ export function getDaysUntil(dateString: string, now: Date): number {
 export function formatReturnsIn(nextDueAt: string, now: Date): string {
     const days = getDaysUntil(nextDueAt, now);
 
-    if (days <= 0) return 'kommer tillbaka idag';
+    if (days <= 0) return 'Kommer tillbaka idag';
     if (days === 1) return 'Kommer tillbaka imorgon';
     return `Kommer tillbaka om ${days} dagar`;
 
