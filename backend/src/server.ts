@@ -15,7 +15,7 @@ const app = express();
 
 // Only allow our own website. On Render, CLIENT_URL is your Vercel address
 // (you already set it there). Locally it's not set, so all origins are allowed.
-app.use(cors({ origin: process.env.CLIENT_URL || '*'}));
+app.use(cors({ origin: process.env.CLIENT_URL || '*' }));
 
 // Turn incoming JSON (e.g. from a POST) into an object we can use as req.body
 app.use(express.json());
@@ -85,7 +85,7 @@ app.get('/api/tasks', (req, res) => {
         if (task.status === 'done' && isDue(task.nextDueAt, now)) {
             task.status = 'todo'; // Back in "Att göra"
             task.nextDueAt = null; // Nothing scheduled until it's done again
-            
+
         }
     });
 
@@ -112,7 +112,7 @@ app.post('/api/tasks', (req, res) => {
 
     // Validation: either null, or a whole number from 1 to 365
     const validRepeat = repeatEveryDays === null ||
-    (Number.isInteger(repeatEveryDays) && repeatEveryDays >= 1 && repeatEveryDays <= 365);
+        (Number.isInteger(repeatEveryDays) && repeatEveryDays >= 1 && repeatEveryDays <= 365);
 
     if (!validRepeat) {
         return res.status(400).json({ error: 'Antal dagar måste vara mellan 1 och 365' });
@@ -169,12 +169,12 @@ app.patch('/api/tasks/:id/status', (req, res) => {
             task.currentAssigneeIndex,
             task.assigneeIds.length
         );
-        
+
         // Repeating task? Schedule when it comes back: now + X days.
         //toISOString() turns the date into text that JSON can send.
         if (task.repeatEveryDays !== null) {
             task.nextDueAt = addDays(new Date(), task.repeatEveryDays).toISOString();
-            
+
         }
     } else if (status !== 'done') {
         // Moved OUT of done (or between todo/inProgress): nothing is scheduled
@@ -234,6 +234,37 @@ app.post('/api/members', (req, res) => {
     // 201 = Created
     res.status(201).json(newMember);
 });
+
+// DELETE /api/members/:id → remove a family member
+app.delete('/api/members/:id', (req, res) => {
+    // :id arrives as text, so turn it into a number
+    const memberId = Number(req.params.id);
+
+    // Find the member's position in the list (-1 = not found)
+    const index = members.findIndex((member) => member.id === memberId);
+
+    // No member with that id → 404 Not Found
+    if (index === -1) {
+        return res.status(404).json({ error: 'Familjemedlemmen hittades inte' });
+    }
+
+    // 1. Remove the member from the members list
+    members.splice(index, 1);
+
+    // 2. Remove them from every task's rotation
+    tasks.forEach((task) => {
+        task.assigneeIds = task.assigneeIds.filter((id) => id !== memberId);
+
+        // If the turn now points past the end of the list, start over at the first person
+        if (task.currentAssigneeIndex >= task.assigneeIds.length) {
+            task.currentAssigneeIndex = 0;
+        }
+    });
+
+    // 204 = No Content: "it worked, nothing to send back"
+    res.status(204).end();
+});
+
 
 // Start the server
 app.listen(PORT, () => {
