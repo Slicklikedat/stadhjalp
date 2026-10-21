@@ -16,6 +16,9 @@ export interface Task {
     status: TaskStatus;
     assigneeIds: number[]; // The ids of the members who take turns, in order
     currentAssigneeIndex: number; //Position in assigneeIds of whose turn it is now
+    repeatEveryDays: number | null; // Days until it comes back after Klart. null = one-time task
+    nextDueAt: string | null; // ISO date when it comes back to "todo". null = not scheduled
+    
 }
 
 

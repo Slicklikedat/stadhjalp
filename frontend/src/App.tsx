@@ -57,9 +57,9 @@ function App() {
   }
 
   // Called by TaskForm when the form is submitted.
-  function addTask(title: string, assigneeIds: number[]) {
+  function addTask(title: string, assigneeIds: number[], repeatEveryDays: number | null) {
     // Tell the server, then add the new task (with the id the server chose) to our list
-    createTask(title, assigneeIds)
+    createTask(title, assigneeIds, repeatEveryDays)
       .then((newTask) => {
         setTasks((previousTasks) => [...previousTasks, newTask]);
       })

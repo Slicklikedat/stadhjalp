@@ -15,12 +15,12 @@ export function getTasks(): Promise<Task[]> {
 }
 
 // POST /api/tasks → create a task, get the new task back
-export function createTask(title: string, assigneeIds: number[]): Promise<Task> {
+export function createTask(title: string, assigneeIds: number[], repeatEveryDays: number | null): Promise<Task> {
     return fetch(`${API_URL}/tasks`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         // Send both the title and who takes turns
-        body: JSON.stringify({ title: title, assigneeIds: assigneeIds }),
+        body: JSON.stringify({ title: title, assigneeIds: assigneeIds, repeatEveryDays: repeatEveryDays }),
     }).then((response) => {
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         return response.json();
