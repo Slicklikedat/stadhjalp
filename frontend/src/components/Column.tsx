@@ -31,7 +31,23 @@ function Column({ title, tasks, members, nextStatus, onMove, onDelete }: ColumnP
                             <h3>{task.title}</h3>
 
                             {/* Each detail on its own line */}
-                            <p>Tur: {currentMember ? currentMember.name : 'Ingen vald'}</p>
+                            <p>
+                                Tur:{' '}
+                                {currentMember ? (
+                                    <span className="member">
+                                        {/* The member's own color. aria-hidden: it's decoration, the name is what matters */}
+                                        <span
+                                            className="member-dot"
+                                            style={{ backgroundColor: currentMember.color }}
+                                            aria-hidden="true"
+                                        />
+                                        {currentMember.name}
+                                    </span>
+                                ) : (
+                                    'Ingen vald'
+                                )}
+                            </p>
+                            
                             <p>{formatRepeat(task.repeatEveryDays)}</p>
 
                             {/* Only for done tasks that will come back: when */}

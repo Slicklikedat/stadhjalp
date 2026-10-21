@@ -71,7 +71,7 @@ function TaskForm({ members, onAdd }: TaskFormProps) {
     }
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="task-form">
             {/* htmlFor connects the label to the input with the same id */}
             <label htmlFor="task-title">Ny uppgift</label>
 
@@ -88,7 +88,7 @@ function TaskForm({ members, onAdd }: TaskFormProps) {
 
                 {members.map((member) => (
                     //Wrapping the checkbox in a <label> makes the name clickable too
-                    <label key={member.id}>
+                    <label key={member.id} className="checkbox-label">
                         <input
                             type="checkbox"
                             // Ticked if this member's id is in selectedIds
@@ -101,7 +101,7 @@ function TaskForm({ members, onAdd }: TaskFormProps) {
             </fieldset>
 
             {/* Checkbox: does this task repeat? */}
-            <label>
+            <label className="checkbox-label">
                 <input
                     type="checkbox"
                     checked={isRepeating}

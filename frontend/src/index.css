@@ -80,3 +80,110 @@ body {
   gap: 0.5rem;
   margin-top: 0.5rem;
 }
+
+/* ---------- Member color dot ---------- */
+.member {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 600;
+  color: #1f2328;
+}
+
+.member-dot {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50%; /* 50% = a circle */
+}
+
+/* ---------- The form ---------- */
+.task-form {
+  display: grid;
+  gap: 0.75rem;
+  max-width: 420px;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: white;
+  border: 1px solid #d9d6cf;
+  border-radius: 10px;
+}
+
+.task-form label {
+  font-weight: 600;
+}
+
+/* The text and number fields */
+input {
+  font: inherit; /* Use the page's font instead of the browser's default */
+  padding: 0.4rem 0.6rem;
+  border: 1px solid #d9d6cf;
+  border-radius: 8px;
+}
+
+input[type='number'] {
+  width: 4.5rem;
+}
+
+/* The group of member checkboxes */
+fieldset {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+legend {
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+
+/* Checkbox + name as one clickable "pill" */
+.checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.7rem;
+  border: 1px solid #d9d6cf;
+  border-radius: 999px; /* Very round corners = pill shape */
+  font-weight: normal !important;
+  cursor: pointer;
+}
+
+/* Error message in the form */
+.task-form [role='alert'] {
+  margin: 0;
+  color: #b42318;
+  font-weight: 600;
+}
+
+/* ---------- Buttons ---------- */
+button {
+  font: inherit;
+  padding: 0.35rem 0.8rem;
+  border: 1px solid #d9d6cf;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #f6f4ef;
+}
+
+/* The main button in the form stands out */
+.task-form button[type='submit'] {
+  justify-self: start;
+  background: #1f6f68;
+  border-color: #1f6f68;
+  color: white;
+}
+
+/* ---------- Keyboard focus ----------
+   :focus-visible only shows when using the keyboard (Tab), not when clicking.
+   The assignment requires that you can navigate with the keyboard. */
+:focus-visible {
+  outline: 3px solid #f4a100;
+  outline-offset: 2px;
+}
