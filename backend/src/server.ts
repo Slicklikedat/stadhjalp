@@ -71,10 +71,6 @@ app.get('/', (req, res) => {
     res.send('Välkommen till Städhjälp API!');
 });
 
-// GET /api/hello → test route that sends JSON
-app.get('/api/hello', (req, res) => {
-    res.json({ message: 'Hej från servern!' });
-});
 
 // GET /api/tasks → send the whole task list
 app.get('/api/tasks', (req, res) => {
